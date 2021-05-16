@@ -15,13 +15,13 @@ def main(stdscr):
     stdscr.box("|", "-")
     stdscr.addstr(0, 0, "Chess Application", curses.color_pair(1))
     
-    board = Board()
+    board = Board.with_base_pos()
 
     stdscr.getch()
 
 # A class representing a chess board
 class Board(dict):
-    def new(self) -> dict:
+    def with_base_pos() -> dict:
         # Create a dictionary to map positions to pieces
         board = {}
 
