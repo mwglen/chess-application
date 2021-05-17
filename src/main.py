@@ -46,7 +46,7 @@ class Position(dict):
 
         # The layout of the pieces on the first and eigth row
         layout = [
-            PieceType.PAWN,
+            PieceType.ROOK,
             PieceType.KNIGHT,
             PieceType.BISHOP,
             PieceType.QUEEN,
@@ -113,8 +113,9 @@ class Board():
                 
                 # Draw the piece if needed
                 if piece:
-                    w.addch(0, 0, piece.type.as_letter(),
-                            curses.A_BOLD)
+                    height, width = w.getmaxyx()
+                    w.addch(int(height/2), int(width/2), 
+                            piece.type.as_letter(),curses.A_BOLD)
 
 # Types of pieces
 class PieceType(Enum):
