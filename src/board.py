@@ -2,11 +2,9 @@ from position import Position
 from piece import Color
 import random
 import curses
-
-class Board():
-
-    # Creates a board with the starting position
-    def __init__(self, base_window):
+class Board:
+    # Creates a new game.
+    def __init__(self, w):
         # Choose who is white and black
         player1 = random.choice(["You", "Computer"])
         player2 = "Computer"
@@ -19,7 +17,10 @@ class Board():
         self.player1 = player1
         self.player2 = player2
         self.position: Position = Position.base()
-        self.setup_graphics(base_window) # Must be called last
+        self.msg = ""
+        self.input_str = ""
+        
+        self.setup_graphics(w)
         
     # This sets up the graphics windows for the board.
     # This must be called anytime the board needs to be resized.
@@ -50,9 +51,43 @@ class Board():
                 x += width
             y += height
             x = int((max_x - width*8)/2)
+
+        self.base_window = base_window
         self.windows = windows
 
-    def draw(self):
+    def _draw(self):
+        w = self.base_window
+
+        # Erase the previous drawing
+        w.erase()
+        
+        # Color the main window
+        w.bkgd(" ", curses.color_pair(1))
+        w.box("|", "-")
+        
+        # Add the title
+        w.addstr(0, 0, "Chess Application", 
+                curses.color_pair(1))
+        
+        # Add error message
+        max_y, max_x = w.getmaxyx()
+        w.addstr(max_y - 2, max_x - 2 - len(self.msg),
+            self.msg, curses.color_pair(6))
+        
+        # List players
+        w.addstr(1, 2, f"White: {self.player1}")
+        w.addstr(1, max_x - 2 - len(f"Black: {self.player2}"), 
+            f"Black: {self.player2}")
+       
+        # Add prompt
+        w.addstr(max_y - 2, 2, f"Enter Move: {self.input_str}")
+        
+
+        # Build and draw the board
+        self.setup_graphics(w)
+        self._draw_board()
+
+    def _draw_board(self):
         for (i, col) in enumerate("abcdefgh"):
             for row in "12345678":
                 # Get the window corresponding to this square
@@ -80,4 +115,43 @@ class Board():
                 if piece:
                     height, width = w.getmaxyx()
                     w.addch(int(height/2), int(width/2), 
-                            piece.type.as_letter(),curses.A_BOLD)
+                        piece.type.as_letter(),curses.A_BOLD)
+    def play(self):
+        while True:
+            self.input_str = ""
+            # Refresh the screen
+            self._draw()
+
+            # While not a linefeed
+            while (c := self.base_window.getch()) != 10:
+           
+                # Return if escape
+                if c == curses.ascii.ESC: return
+
+                # Handle backspaces
+                elif c == curses.ascii.DEL: 
+                    self.input_str = self.input_str[:-1]
+
+                # Ignore tabs and new lines
+                elif c == curses.ascii.TAB: continue
+                elif c == curses.ascii.NL: continue
+
+                # Handle characters
+                elif curses.ascii.isascii(chr(c)):
+                    if len(self.input_str) < 10: 
+                        self.input_str += chr(c)
+                # Refresh the screen
+                self._draw()
+
+            self.msg = self._parse_input()
+    
+    def _parse_input(self) -> str:
+        s = self.input_str
+        if s == "flip":
+            self.white_on_top ^= True
+        elif s == "exit" or s == "quit":
+            quit()
+        else:
+            return f"Error: \"{s}\" is not a valid move"
+        return ""
+    
