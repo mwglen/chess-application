@@ -1,6 +1,8 @@
 import curses
+import curses.ascii
 from position import Position
 from board import Board
+from pgn_parser import pgn, parser
 import time
 
 def main(w):
@@ -26,13 +28,32 @@ def main(w):
     board.position.raw_move("g1", "f3")
     board.position.raw_move("b8", "c6")
     board.position.raw_move("d2", "d4")
-   
+    
     while True:
         # Display the board
         refresh_screen(w, board)
-        
-        # Wait for keypress
-        c = w.getch()
+
+        input_str = ""
+        c = ""
+
+        # While not a linefeed
+        while c != 10:
+            max_y, max_x = w.getmaxyx()
+            w.addstr(max_y - 2, 2, f"Enter Move: {input_str}")
+            
+            # Wait for keypress
+            c = w.getch()
+       
+            # Return if escape
+            if c == 27: return
+            # Handle backspaces
+            elif c == 127:
+                input_str = input_str[:-1]
+            # Handle characters
+            elif curses.ascii.isascii(chr(c)):
+                input_str += chr(c)
+            
+            refresh_screen(w, board)
 
 def refresh_screen(w: curses.window, board: Board):
             # Erase the previous drawing
@@ -51,4 +72,3 @@ def refresh_screen(w: curses.window, board: Board):
             board.draw()
 
 curses.wrapper(main)
-
