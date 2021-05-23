@@ -1,5 +1,6 @@
 import curses
 import curses.ascii
+import random
 from position import Position
 from board import Board
 from pgn_parser import pgn, parser
@@ -17,6 +18,7 @@ def main(w):
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
     curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_BLACK)
+    curses.init_pair(6, curses.COLOR_RED, curses.COLOR_WHITE)
     
     # Create a new board
     board = Board(w)
@@ -29,16 +31,33 @@ def main(w):
     board.position.raw_move("b8", "c6")
     board.position.raw_move("d2", "d4")
     
-    while True:
-        # Display the board
-        refresh_screen(w, board)
+    # Choose who is white and black
+    player1 = random.choice(["You", "Computer"])
+    player2 = "Computer"
+    if player2 == player1: player2 = "You"
 
+    # Set up a blank error message
+    msg = ""
+    while True:
         input_str = ""
         c = ""
 
         # While not a linefeed
         while c != 10:
+            # Refresh the screen
+            refresh_screen(w, board)
+
+            # Add error message
             max_y, max_x = w.getmaxyx()
+            w.addstr(max_y - 2, max_x - 2 - len(msg), msg, 
+                curses.color_pair(6))
+            
+            # List players
+            w.addstr(1, 2, f"White: {player1}")
+            w.addstr(1, max_x - 2 - len(f"Black: {player2}"), 
+                f"Black: {player2}")
+           
+            # Add prompt
             w.addstr(max_y - 2, 2, f"Enter Move: {input_str}")
             
             # Wait for keypress
@@ -50,14 +69,20 @@ def main(w):
             # Handle backspaces
             elif c == curses.ascii.DEL: input_str = input_str[:-1]
 
-            # Ignore tabs
+            # Ignore tabs and new lines
             elif c == curses.ascii.TAB: continue
+            elif c == curses.ascii.NL: continue
 
             # Handle characters
             elif curses.ascii.isascii(chr(c)):
-                if len(input_str) < 20: input_str += chr(c)
+                if len(input_str) < 10: input_str += chr(c)
             
-            refresh_screen(w, board)
+        msg = parse_input(w, input_str)
+
+def parse_input(w: curses.window, string: str) -> str:
+    return f"Error: \"{string}\" is not a valid move"
+    
+
 
 def refresh_screen(w: curses.window, board: Board):
             # Erase the previous drawing
