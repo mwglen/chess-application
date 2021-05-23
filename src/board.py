@@ -1,16 +1,27 @@
 from position import Position
 from piece import Color
+import random
 import curses
 
 class Board():
 
-    # Creates a board without any pieces on it
+    # Creates a board with the starting position
     def __init__(self, base_window):
-        # Use a position with no pieces in it
-        self.position: Position = Position.base()
-        self.setup_graphics(base_window)
+        # Choose who is white and black
+        player1 = random.choice(["You", "Computer"])
+        player2 = "Computer"
+        white_on_top = True
+        if player2 == player1: 
+            player2 = "You"
+            white_on_top = False
         
-    # This setups the graphics windows for the board.
+        self.white_on_top = white_on_top
+        self.player1 = player1
+        self.player2 = player2
+        self.position: Position = Position.base()
+        self.setup_graphics(base_window) # Must be called last
+        
+    # This sets up the graphics windows for the board.
     # This must be called anytime the board needs to be resized.
     def setup_graphics(self, base_window):
         windows = {}
@@ -26,8 +37,14 @@ class Board():
         y = int((max_y - height*8)/2)
         x = int((max_x - width*8)/2)
 
-        for row in "12345678":
-            for col in "abcdefgh":
+        rows = "12345678"
+        cols = "abcdefgh"
+        if self.white_on_top:
+            rows = rows[::-1]
+            cols = cols[::-1]
+
+        for row in rows:
+            for col in cols:
                 w = base_window.subwin(height, width, y, x)
                 windows[col + row] = w
                 x += width

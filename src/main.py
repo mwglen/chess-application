@@ -1,6 +1,5 @@
 import curses
 import curses.ascii
-import random
 from position import Position
 from board import Board
 from pgn_parser import pgn, parser
@@ -21,21 +20,16 @@ def main(w):
     curses.init_pair(6, curses.COLOR_RED, curses.COLOR_WHITE)
     
     # Create a new board
-    board = Board(w)
+    b = Board(w)
 
     # Set the board's position to be the base position
-    board.position = Position.base()
-    board.position.raw_move("e2", "e4")
-    board.position.raw_move("e7", "e5")
-    board.position.raw_move("g1", "f3")
-    board.position.raw_move("b8", "c6")
-    board.position.raw_move("d2", "d4")
+    b.position = Position.base()
+    b.position.raw_move("e2", "e4")
+    b.position.raw_move("e7", "e5")
+    b.position.raw_move("g1", "f3")
+    b.position.raw_move("b8", "c6")
+    b.position.raw_move("d2", "d4")
     
-    # Choose who is white and black
-    player1 = random.choice(["You", "Computer"])
-    player2 = "Computer"
-    if player2 == player1: player2 = "You"
-
     # Set up a blank error message
     msg = ""
     while True:
@@ -45,7 +39,7 @@ def main(w):
         # While not a linefeed
         while c != 10:
             # Refresh the screen
-            refresh_screen(w, board)
+            draw_board(w, b)
 
             # Add error message
             max_y, max_x = w.getmaxyx()
@@ -53,9 +47,9 @@ def main(w):
                 curses.color_pair(6))
             
             # List players
-            w.addstr(1, 2, f"White: {player1}")
-            w.addstr(1, max_x - 2 - len(f"Black: {player2}"), 
-                f"Black: {player2}")
+            w.addstr(1, 2, f"White: {b.player1}")
+            w.addstr(1, max_x - 2 - len(f"Black: {b.player2}"), 
+                f"Black: {b.player2}")
            
             # Add prompt
             w.addstr(max_y - 2, 2, f"Enter Move: {input_str}")
@@ -77,14 +71,20 @@ def main(w):
             elif curses.ascii.isascii(chr(c)):
                 if len(input_str) < 10: input_str += chr(c)
             
-        msg = parse_input(w, input_str)
+        msg = parse_input(w, b, input_str)
 
-def parse_input(w: curses.window, string: str) -> str:
-    return f"Error: \"{string}\" is not a valid move"
+def parse_input(w: curses.window, b: Board, string: str) -> str:
+    if string == "flip":
+        b.white_on_top ^= True
+    elif string == "exit":
+        quit()
+    else:
+        return f"Error: \"{string}\" is not a valid move"
+    return ""
     
 
 
-def refresh_screen(w: curses.window, board: Board):
+def draw_board(w: curses.window, b: Board):
             # Erase the previous drawing
             w.erase()
             
@@ -97,7 +97,7 @@ def refresh_screen(w: curses.window, board: Board):
                     curses.color_pair(1))
 
             # Build and draw the board
-            board.setup_graphics(w)
-            board.draw()
+            b.setup_graphics(w)
+            b.draw()
 
 curses.wrapper(main)
