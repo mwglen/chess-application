@@ -45,13 +45,17 @@ def main(w):
             c = w.getch()
        
             # Return if escape
-            if c == 27: return
+            if c == curses.ascii.ESC: return
+
             # Handle backspaces
-            elif c == 127:
-                input_str = input_str[:-1]
+            elif c == curses.ascii.DEL: input_str = input_str[:-1]
+
+            # Ignore tabs
+            elif c == curses.ascii.TAB: continue
+
             # Handle characters
             elif curses.ascii.isascii(chr(c)):
-                input_str += chr(c)
+                if len(input_str) < 20: input_str += chr(c)
             
             refresh_screen(w, board)
 
