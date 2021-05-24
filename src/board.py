@@ -41,6 +41,7 @@ class Board:
 
         rows = "12345678"
         cols = "abcdefgh"
+        cols = cols[::-1]
         if self.white_on_top:
             rows = rows[::-1]
             cols = cols[::-1]
@@ -104,7 +105,6 @@ class Board:
                     if piece and piece.color == Color.BLACK:
                         # black text, white background
                         w.bkgd(" ", curses.color_pair(3))
-                        
                 else:
                     # white text, black background
                     w.bkgd(" ", curses.color_pair(4))

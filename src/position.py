@@ -55,30 +55,39 @@ class Position(dict):
 
         if move == "O-O": self._castle(True, c)
         elif move == "O-O-O": self._castle(False, c)
-        elif len(move) == 2:
-            if move[0] in cols and move[1] in rows:
-                sf = None
-                for square in self:
-                    piece = self.get(square)
-                    if (
-                        square[0] == move[0] and piece
-                        and piece.type == PieceType.PAWN
-                        and piece.color == c
-                    ):
-                        if sf == None: sf = square
-                        else: raise InvalidMove("Ambiguous movement")
-                if sf == None:
-                    raise InvalidMove("No pawn on {move[0]} file")
-                self.move(sf, move)
-            else:
-                raise InvalidMove("Move must be entered as valid SAN")
-        elif len(move) == 3:
-            pass
-        elif len(move) == 4:
-            pass
+
+        # Moves like: e4
+        elif (
+            len(move) == 2
+            and move[0] in cols 
+            and move[1] in rows
+        ): self.move(self.find_sf(move[0], move, c), move)
+        
+        # Moves like: exd5
+        elif (
+            len(move) == 4
+            and move[0] in cols
+            and move[1] == "x"
+            and move[2] in cols
+            and move[3] in rows
+        ): self.move(self.find_sf(move[0], move[-2:], c), move[-2:])
         else:
             raise InvalidMove("Move must be entered as valid SAN")
-    
+   
+    def find_sf(self, col: str, st: str, c: Color) -> str:
+        sf = None
+        offset = 1 if c == Color.WHITE else -1
+        for square in self:
+            piece = self.get(square)
+            if (
+                square[0] == col and piece
+                and piece.type == PieceType.PAWN
+                and piece.color == c
+                and (not sf or st[1] != str(int(sf[1]) + offset))
+            ): sf = square
+        if not sf: raise InvalidMove("No pawn on {col} file")
+        return sf
+
     def move(self, sf: str, st: str):
         fp = self.get(sf)
         tp = self.get(st)
@@ -91,13 +100,13 @@ class Position(dict):
         # Get the info of the player whose move it is
         info = self.white if is_white else self.black
         
-        if fp == None:
+        if not fp:
             raise InvalidMove("{sf} does not have a piece on it")
 
         if not self._sees(sf, st) and not self._can_take(sf, st):
             raise InvalidMove(f"The piece on {sf} cannot go to {st}")
 
-        if tp != None and fp != None and tp.color == fp.color:
+        if tp and fp and tp.color == fp.color:
             raise InvalidMove("Cannot capture pieces of same color")
 
         if info.in_check:
@@ -132,7 +141,7 @@ class Position(dict):
         # Check if castling is blocked by pieces
         cols_to_check = "fg" if short else "bcd"
         for col in cols_to_check:
-            if self[col + row] != None: 
+            if self.get(col + row): 
                 raise InvalidMove("Cannot castle through pieces")
             for square in self:
                 if self[square].color != c and self._can_take(square, col + row):
@@ -185,7 +194,7 @@ class Position(dict):
 
         # If there is no piece on from_square, 
         # then it can't see to_square
-        if fp == None: return False
+        if not fp: return False
 
         # Squares see themself, as long as there is a piece on it
         if sf == st: return True
@@ -203,7 +212,7 @@ class Position(dict):
                     if col == f_col: continue
                     
                     # Check whether or the current square is empty
-                    empty = self[chr(col) + chr(row)] == None
+                    empty = not self(chr(col) + chr(row))
                     
                     # If we find that the last square is empty, return true
                     if empty and (col == range(f_col, t_col)[-1]): return True
@@ -227,9 +236,10 @@ class Position(dict):
                         if col == f_col and row == f_row: continue
                         
                         # Check whether or the current square is empty
-                        empty = self[chr(col) + chr(row)] == None
+                        empty = not self.get(chr(col) + chr(row))
                         
-                        # If we find that the last square is empty, return true
+                        # If we find that the last square is empty, 
+                        # return true
                         last_col = col == range(f_col, t_col)[-1]
                         last_row = row == range(f_row, t_row)[-1]
                         if empty and last_col and last_row: return True
