@@ -1,4 +1,4 @@
-from position import Position
+from position import Position, InvalidMove
 from piece import Color
 import random
 import curses
@@ -19,6 +19,7 @@ class Board:
         self.position: Position = Position.base()
         self.msg = ""
         self.input_str = ""
+        self.curr_turn = Color.WHITE
         
         self.setup_graphics(w)
         
@@ -152,6 +153,13 @@ class Board:
         elif s == "exit" or s == "quit":
             quit()
         else:
-            return f"Error: \"{s}\" is not a valid move"
+            p = self.position
+            try:
+                p.move_san(s, self.curr_turn)
+                if self.curr_turn == Color.WHITE:
+                    self.curr_turn = Color.BLACK
+                else: self.curr_turn = Color.WHITE
+            except InvalidMove as err:
+                 return str(err)
         return ""
     

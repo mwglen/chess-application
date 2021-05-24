@@ -49,11 +49,35 @@ class Position(dict):
     # Moves a piece in the position with validation.
     # Raises an InvalidMove exception if the move is
     # invalid
-    def move(self, move: str, c: Color):
+    def move_san(self, move: str, c: Color):
+        cols = "abcdefgh"
+        rows = "12345678"
+
         if move == "O-O": self._castle(True, c)
         elif move == "O-O-O": self._castle(False, c)
-        else:
+        elif len(move) == 2:
+            if move[0] in cols and move[1] in rows:
+                sf = None
+                for square in self:
+                    piece = self.get(square)
+                    if (
+                        square[0] == move[0] and piece
+                        and piece.type == PieceType.PAWN
+                        and piece.color == c
+                    ):
+                        if sf == None: sf = square
+                        else: raise InvalidMove("Ambiguous movement")
+                if sf == None:
+                    raise InvalidMove("No pawn on {move[0]} file")
+                self.move(sf, move)
+            else:
+                raise InvalidMove("Move must be entered as valid SAN")
+        elif len(move) == 3:
             pass
+        elif len(move) == 4:
+            pass
+        else:
+            raise InvalidMove("Move must be entered as valid SAN")
     
     def move(self, sf: str, st: str):
         fp = self.get(sf)
@@ -135,8 +159,17 @@ class Position(dict):
         if fp.type == PieceType.PAWN:
             orig_row = 2 if fp.color == Color.WHITE else 7
             offset = 1 if fp.color == Color.WHITE else -1
-            if int(sf[1]) == orig_row: offset *= 2
-            return t_col == f_col and t_row == (f_row + offset)
+            if (t_col == f_col):
+                if t_row == (f_row + offset) and not self.get(st):
+                    return True
+                else: return (
+                    int(sf[1]) == orig_row
+                    and t_row == (f_row + 2*offset)
+                    and not self.get(st)
+                )
+            
+            
+
         else:
             return self._can_take(sf, st)
 
