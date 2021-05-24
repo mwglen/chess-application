@@ -24,13 +24,12 @@ def main(w):
 
     # Set the board's position to be the base position
     b.position = Position.base()
-    b.position.raw_move("e2", "e4")
-    b.position.raw_move("e7", "e5")
-    b.position.raw_move("g1", "f3")
-    b.position.raw_move("b8", "c6")
-    b.position.raw_move("d2", "d4")
+    b.position.move("e2", "e4")
+    b.position.move("e7", "e5")
+    b.position.move("g1", "f3")
+    b.position.move("b8", "c6")
+    b.position.move("d2", "d4")
     
     b.play()
-    
-curses.wrapper(main)
 
+curses.wrapper(main)
