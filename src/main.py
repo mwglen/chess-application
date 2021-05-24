@@ -23,6 +23,7 @@ def main(w):
     # Create a new board
     b = Board(w)
     b.position = Position.base()
+    b.position.move_san("Nc3", Color.WHITE)
     b.play()
 
 curses.wrapper(main)

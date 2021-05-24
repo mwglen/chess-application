@@ -52,6 +52,7 @@ class Position(dict):
     def move_san(self, move: str, c: Color):
         cols = "abcdefgh"
         rows = "12345678"
+        pieces = "NBRQK"
 
         if move == "O-O": self._castle(True, c)
         elif move == "O-O-O": self._castle(False, c)
@@ -61,7 +62,7 @@ class Position(dict):
             len(move) == 2
             and move[0] in cols 
             and move[1] in rows
-        ): self.move(self.find_sf(move[0], move, c), move)
+        ): self._move(c, move[-2:])
         
         # Moves like: exd5
         elif (
@@ -70,23 +71,60 @@ class Position(dict):
             and move[1] == "x"
             and move[2] in cols
             and move[3] in rows
-        ): self.move(self.find_sf(move[0], move[-2:], c), move[-2:])
+        ): self._move(c, move[-2:], "P", move[0])
+
+        # Moves like: Nf3
+        elif (
+            len(move) == 3
+            and move[0] in pieces
+            and move[1] in cols
+            and move[2] in rows
+        ): self._move(c, move[-2:], move[0])
+
+        # Moves Like: Nxf3
+        elif (
+            len(move) == 4
+            and move[0] in pieces
+            and move[1] == "x"
+            and move[2] in cols
+            and move[3] in rows
+        ): self._move(c, move[-2:], move[0])
+
+        # Moves Like: Ndf3
+        elif (
+            len(move) == 4
+            and move[0] in pieces
+            and move[1] in cols
+            and move[2] in cols
+            and move[3] in rows
+        ): self._move(c, move[-2:], move[0], move[1])
+
+        # Moves Like: Ndxf3
+        elif (
+            len(move) == 5
+            and move[0] in pieces
+            and move[1] in cols
+            and move[2] in "x"
+            and move[3] in cols
+            and move[4] in rows
+        ): self.find_sf(c, move[-2:], move[0], move[1])
+        
         else:
             raise InvalidMove("Move must be entered as valid SAN")
    
-    def find_sf(self, col: str, st: str, c: Color) -> str:
+    def _move(self, c: Color, st: str, pt = "P", col: str = None):
         sf = None
-        offset = 1 if c == Color.WHITE else -1
         for square in self:
             piece = self.get(square)
             if (
-                square[0] == col and piece
-                and piece.type == PieceType.PAWN
+                (not col or square[0] == col) and piece
+                and piece.type.as_letter() == pt
                 and piece.color == c
-                and (not sf or st[1] != str(int(sf[1]) + offset))
+                and (self._sees(square, st) 
+                    or self._can_take(square, st))
             ): sf = square
-        if not sf: raise InvalidMove("No pawn on {col} file")
-        return sf
+        if not sf: raise InvalidMove("Could not find piece to move")
+        self.move(sf, st)
 
     def move(self, sf: str, st: str):
         fp = self.get(sf)
