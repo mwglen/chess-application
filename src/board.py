@@ -126,9 +126,6 @@ class Board:
             # While not a linefeed
             while (c := self.base_window.getch()) != 10:
            
-                # Return if escape
-                if c == curses.ascii.ESC: return
-
                 # Handle backspaces
                 elif c == curses.ascii.DEL: 
                     self.input_str = self.input_str[:-1]
