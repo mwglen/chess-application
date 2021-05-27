@@ -127,7 +127,7 @@ class Board:
             while (c := self.base_window.getch()) != 10:
            
                 # Handle backspaces
-                elif c == curses.ascii.DEL: 
+                if c == curses.ascii.DEL: 
                     self.input_str = self.input_str[:-1]
 
                 # Ignore tabs and new lines

@@ -226,16 +226,10 @@ class Position(dict):
 
         if fp.type in [PieceType.BISHOP, PieceType.QUEEN]:
             # Check if on diagonal
-            if abs(af[0] - at[0]) == abs(af[1] - at[1]):
-                # Get a list of the square between sf and st
-                to_check = list(map(
-                    lambda x: chr(x[0]) + chr(x[1]),
-                    zip(range(af[0], at[0]), range(af[1], at[1]))
-                ))[1:]
-                
-                # Check if there are no pieces between the squares
-                if all(not self.get(i) for i in to_check): 
-                    return True
+            if (
+                abs(af[0] - at[0]) == abs(af[1] - at[1])
+                and not self._pieces_between(sf, st)
+            ): return True
         
         if fp.type in [PieceType.ROOK, PieceType.QUEEN]: 
             # Check if on same row or column (exclusive)
