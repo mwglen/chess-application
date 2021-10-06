@@ -30,6 +30,9 @@ class GameData:
 
 def draw(w, gd):
     
+    # Get maximum allowed x and y values
+    max_y, max_x = w.getmaxyx()
+    
     # Erase the previous drawing
     w.erase()
     
@@ -38,11 +41,11 @@ def draw(w, gd):
     w.box("|", "-")
     
     # Add the title
-    w.addstr(0, 0, "Chess Application", 
+    text = "Terminal Chess"
+    w.addstr(0, max_x//2 - len(text)//2, text, 
             curses.color_pair(1))
     
     # Add error message
-    max_y, max_x = w.getmaxyx()
     w.addstr(max_y - 2, max_x - 2 - len(gd.msg),
         gd.msg, curses.color_pair(6))
     

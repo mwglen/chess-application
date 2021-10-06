@@ -56,11 +56,6 @@ def _draw(w, curr_sel):
     w.bkgd(" ", curses.color_pair(1))
     w.box("|", "-")
 
-    # Add the title to header
-    # w.addstr(0, 0, "Chess Application", 
-    #         curses.color_pair(1))
-  
-
     # Add the title
     title = [
         r" _____                   _             _   _____ _                    ",
