@@ -1,5 +1,7 @@
 from position import Position, InvalidMove
+import local_game
 import vs_computer
+import through_ssh
 import random
 import curses
 
@@ -20,16 +22,15 @@ def display(w):
         if c == 10:
             # If user selected vs_computer
             if curr_sel == 0:
-                # Create a new board
                 vs_computer.start(w)
 
             # If user selected local
             elif curr_sel == 1:
-                pass
+                local_game.start(w)
 
             # If user selected through_ssh
             elif curr_sel == 2:
-                pass
+                through_ssh.start(w)
             
             # If user selected exit
             elif curr_sel == 3:
@@ -85,7 +86,7 @@ def _draw(w, curr_sel):
     i += 1
 
     # Add "LOCAL" button
-    text = "LOCAL"
+    text = "LOCAL GAME"
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
             curses.color_pair(6 if curr_sel == 1 else 1))
     i += 1

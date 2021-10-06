@@ -8,7 +8,7 @@ from game import Gamemode, GameData
 def start(w):
     
     # Initialize game data
-    gd = GameData(Gamemode.VS_COMPUTER)
+    gd = GameData(Gamemode.THROUGH_SSH)
 
     while True:
         # Refresh the screen

@@ -8,7 +8,7 @@ from game import Gamemode, GameData
 def start(w):
     
     # Initialize game data
-    gd = GameData(Gamemode.VS_COMPUTER)
+    gd = GameData(Gamemode.LOCAL_GAME)
 
     while True:
         # Refresh the screen
@@ -41,6 +41,9 @@ def start(w):
                     if gd.curr_turn == Color.WHITE:
                         gd.curr_turn = Color.BLACK
                     else: gd.curr_turn = Color.WHITE
+
+                    # Flip board
+                    gd.white_on_top ^= True
 
                 except InvalidMove as err:
                      gd.msg = str(err)

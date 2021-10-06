@@ -1,5 +1,4 @@
 from piece import Piece, PieceType, Color
-from enum import Enum, auto
 
 class InvalidMove(Exception):
     errors = {
