@@ -117,6 +117,7 @@ class Board:
                     height, width = w.getmaxyx()
                     w.addch(int(height/2), int(width/2), 
                         piece.type.as_letter(),curses.A_BOLD)
+
     def play(self):
         while True:
             self.input_str = ""
