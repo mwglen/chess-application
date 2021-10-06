@@ -1,10 +1,6 @@
 import curses
 import curses.ascii
-from position import Position
-from piece import Color
-from board import Board
 import menu
-from pgn_parser import pgn, parser
 import time
 
 def main(w):
@@ -24,10 +20,5 @@ def main(w):
 
     # Go to main menu
     menu.display(w)
-    
-    # Create a new board
-    # b = Board(w)
-    # b.position = Position.base()
-    # b.play()
 
 curses.wrapper(main)

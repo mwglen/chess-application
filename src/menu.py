@@ -1,5 +1,5 @@
 from position import Position, InvalidMove
-from board import Board
+import vs_computer
 import random
 import curses
 
@@ -20,11 +20,8 @@ def display(w):
         if c == 10:
             # If user selected vs_computer
             if curr_sel == 0:
-                info = "0"
                 # Create a new board
-                b = Board(w)
-                b.position = Position.base()
-                b.play()
+                vs_computer.start(w)
 
             # If user selected local
             elif curr_sel == 1:
@@ -104,6 +101,3 @@ def _draw(w, curr_sel):
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
             curses.color_pair(6 if curr_sel == 3 else 1))
     i += 1
-    
-    # Add info box
-    w.addstr(max_y - 2, 2, f"Current Selection: {curr_sel}")
