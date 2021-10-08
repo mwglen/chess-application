@@ -2,7 +2,22 @@ import game
 import curses
 from piece import Color
 from position import Position, InvalidMove
-from game import Gamemode, GameData
+from game import GameData
+
+class SSHGameData(GameData):
+    def __init__(self):
+        # Choose who is white and black
+        white = random.choice(["Player", "Computer"])
+        black = "Computer"
+        white_on_top = True
+        if player2 == player1: 
+            player2 = "Player"
+            white_on_top = False
+        
+        # Set class attributes
+        self.white_on_top = white_on_top
+        self.player1 = player1
+        self.player2 = player2
 
 # Starts a new local game
 def start(w):

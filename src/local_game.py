@@ -2,15 +2,25 @@ import game
 import curses
 from piece import Color
 from position import Position, InvalidMove
-from game import Gamemode, GameData
+from game import GameData
+
+class LocalGameData(GameData):
+    def __init__(self):
+        self.white_on_top = True
+        self.white = "Player 1"
+        self.black = "Player 2"
+    
 
 # Starts a new local game
 def start(w):
+
+    # Ask the user who is white and black
+    white, black = game.player_setup()
     
     # Initialize game data
-    gd = GameData(Gamemode.LOCAL_GAME)
+    gd = LocalGameData()
 
-    while True:
+    while not text_edit(gd.input_str, 10):
         # Refresh the screen
         game.draw(w, gd)
 
@@ -47,17 +57,3 @@ def start(w):
 
                 except InvalidMove as err:
                      gd.msg = str(err)
-   
-        # Handle backspaces
-        elif c == curses.ascii.DEL: 
-            gd.input_str = gd.input_str[:-1]
-
-        # Ignore tabs and new lines
-        elif c == curses.ascii.TAB: continue
-        elif c == curses.ascii.NL: continue
-
-        # Handle characters
-        elif curses.ascii.isascii(chr(c)):
-            if len(gd.input_str) < 10: 
-                gd.input_str += chr(c)
-

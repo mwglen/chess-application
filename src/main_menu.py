@@ -1,4 +1,5 @@
 from position import Position, InvalidMove
+from constants import *
 import local_game
 import vs_computer
 import through_ssh
@@ -17,26 +18,23 @@ def display(w):
 
         # Get inputted character
         c = w.getch()
-
+        
         # Handle linefeeds
         if c == 10:
+
             # If user selected vs_computer
-            if curr_sel == 0:
-                vs_computer.start(w)
+            if curr_sel == 0: vs_computer.start(w)
 
             # If user selected local
-            elif curr_sel == 1:
-                local_game.start(w)
+            elif curr_sel == 1: local_game.start(w)
 
             # If user selected through_ssh
-            elif curr_sel == 2:
-                through_ssh.start(w)
+            elif curr_sel == 2: through_ssh.start(w)
             
             # If user selected exit
-            elif curr_sel == 3:
-                quit()
-
-            # Handle up arrow key
+            elif curr_sel == 3: quit()
+        
+        # Handle up arrow key
         elif (c == curses.KEY_UP and curr_sel > 0):
             curr_sel -= 1
         
@@ -44,16 +42,15 @@ def display(w):
         elif (c == curses.KEY_DOWN and curr_sel < 3):
             curr_sel += 1
 
+
+
 def _draw(w, curr_sel):
 
     # Get the size of the window
     max_y, max_x = w.getmaxyx()
 
-    # Erase the previous drawing
-    w.erase()
-    
     # Color the main window
-    w.bkgd(" ", curses.color_pair(1))
+    w.bkgd(" ", curses.color_pair(MM))
     w.box("|", "-")
 
     # Add the title
@@ -71,29 +68,29 @@ def _draw(w, curr_sel):
     i = -4
     for text in title:
         w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
-                curses.color_pair(1))
+                curses.color_pair(MM))
         i += 1
 
     # Add "VS COMPUTER" button
     text = "VS COMPUTER"
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
-            curses.color_pair(6 if curr_sel == 0 else 1))
+            curses.color_pair(ER if curr_sel == 0 else MM))
     i += 1
 
     # Add "LOCAL" button
     text = "LOCAL GAME"
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
-            curses.color_pair(6 if curr_sel == 1 else 1))
+            curses.color_pair(ER if curr_sel == 1 else MM))
     i += 1
    
     # Add "THROUGH SSH" button
     text = "THROUGH SSH"
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
-            curses.color_pair(6 if curr_sel == 2 else 1))
+            curses.color_pair(ER if curr_sel == 2 else MM))
     i += 1
     
     # Add "QUIT" button
     text = "QUIT"
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
-            curses.color_pair(6 if curr_sel == 3 else 1))
+            curses.color_pair(ER if curr_sel == 3 else MM))
     i += 1

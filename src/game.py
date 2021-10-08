@@ -1,35 +1,30 @@
 from position import Position, InvalidMove
 from piece import Color
-from enum import Enum, auto
+from constants import *
+import enter_names
+import choose_colors
 import random
 import curses
 
-class Gamemode(Enum):
-    VS_COMPUTER = auto()
-    LOCAL_GAME = auto()
-    THROUGH_SSH = auto()
-
 class GameData:
-    def __init__(self, gm: Gamemode):
-        # Choose who is white and black
-        player1 = random.choice(["Player", "Computer"])
-        player2 = "Computer"
-        white_on_top = True
-        if player2 == player1: 
-            player2 = "Player"
-            white_on_top = False
+    def __init__(self, w, gm):
+        player1, player2 = enter_names.start(w, gm)
+        white, black = choose_colors.start(player1, player2)
+        white_on_top = gm == VS_COMPUTER and player2 == white
 
         # Set class attributes
-        self.white_on_top = white_on_top
         self.player1 = player1
         self.player2 = player2
-        self.position: Position = Position.base()
+        self.white = white
+        self.black = black
+        self.white_on_top = white_on_top
+        self.position = Position.base()
         self.curr_turn = Color.WHITE
         self.input_str = ""
         self.msg = ""
 
 def draw(w, gd):
-    
+
     # Get maximum allowed x and y values
     max_y, max_x = w.getmaxyx()
     
@@ -37,17 +32,17 @@ def draw(w, gd):
     w.erase()
     
     # Color the main window
-    w.bkgd(" ", curses.color_pair(1))
+    w.bkgd(" ", curses.color_pair(MM))
     w.box("|", "-")
     
     # Add the title
     text = "Terminal Chess"
     w.addstr(0, max_x//2 - len(text)//2, text, 
-            curses.color_pair(1))
+            curses.color_pair(MM))
     
     # Add error message
     w.addstr(max_y - 2, max_x - 2 - len(gd.msg),
-        gd.msg, curses.color_pair(6))
+        gd.msg, curses.color_pair(ER))
     
     # List players
     w.addstr(1, 2, f"White: {gd.player1}")
@@ -108,16 +103,16 @@ def _draw_board(gd, sw):
             # Choose the square's colors
             if (int(row) % 2 == 0) ^ (i % 2 == 0):
                 # white text, white background
-                w.bkgd(" ", curses.color_pair(2))
+                w.bkgd(" ", curses.color_pair(WW))
                 if piece and piece.color == Color.BLACK:
                     # black text, white background
-                    w.bkgd(" ", curses.color_pair(3))
+                    w.bkgd(" ", curses.color_pair(BW))
             else:
                 # white text, black background
-                w.bkgd(" ", curses.color_pair(4))
+                w.bkgd(" ", curses.color_pair(WB))
                 if piece and piece.color == Color.BLACK:
                     # black text, black background
-                    w.bkgd(" ", curses.color_pair(5))
+                    w.bkgd(" ", curses.color_pair(BB))
             
             # Draw the piece if needed
             if piece:

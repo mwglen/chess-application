@@ -2,23 +2,24 @@ import game
 import curses
 from piece import Color
 from position import Position, InvalidMove
-from game import Gamemode, GameData
+from game import GameData
+from menu_functions import edit_text
+from constants import *
 
 # Starts a new local game
 def start(w):
     
     # Initialize game data
-    gd = GameData(Gamemode.VS_COMPUTER)
+    gd = GameData(w, LOCAL_GAME)
 
     while True:
+
         # Refresh the screen
         game.draw(w, gd)
 
-        # Get a character
-        c = w.getch()
-        
         # Handle linefeeds
-        if c == 10:
+        if edit_text(gd.input_str, 10):
+
             # Reset msg
             gd.msg = ""
             s = gd.input_str
@@ -44,17 +45,3 @@ def start(w):
 
                 except InvalidMove as err:
                      gd.msg = str(err)
-   
-        # Handle backspaces
-        elif c == curses.ascii.DEL: 
-            gd.input_str = gd.input_str[:-1]
-
-        # Ignore tabs and new lines
-        elif c == curses.ascii.TAB: continue
-        elif c == curses.ascii.NL: continue
-
-        # Handle characters
-        elif curses.ascii.isascii(chr(c)):
-            if len(gd.input_str) < 10: 
-                gd.input_str += chr(c)
-
