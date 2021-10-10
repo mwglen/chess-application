@@ -12,7 +12,7 @@ class GameData:
             player1, player2 = enter_names.start(w, gm)
             white, black = choose_colors.start(w, player1, player2)
             
-        white_on_top = (gm == VS_COMPUTER and player2 == white)
+        white_on_top = False
 
         # Set class attributes
         self.player1 = player1
@@ -47,9 +47,9 @@ def draw(w, gd):
         gd.msg, curses.color_pair(ER))
     
     # List players
-    w.addstr(1, 2, f"White: {gd.player1}")
-    w.addstr(1, max_x - 2 - len(f"Black: {gd.player2}"), 
-        f"Black: {gd.player2}")
+    w.addstr(1, 2, f"White: {gd.white}")
+    w.addstr(1, max_x - 2 - len(f"Black: {gd.black}"), 
+        f"Black: {gd.black}")
    
     # Add prompt
     w.addstr(max_y - 2, 2, f"Enter Move: {gd.input_str}")
@@ -79,7 +79,7 @@ def _create_subwindows(base_window, gd):
     rows = "12345678"
     cols = "abcdefgh"
     cols = cols[::-1]
-    if gd.white_on_top:
+    if not gd.white_on_top:
         rows = rows[::-1]
         cols = cols[::-1]
 
@@ -105,16 +105,16 @@ def _draw_board(gd, sw):
             # Choose the square's colors
             if (int(row) % 2 == 0) ^ (i % 2 == 0):
                 # white text, white background
-                w.bkgd(" ", curses.color_pair(WW))
-                if piece and piece.color == Color.BLACK:
-                    # black text, white background
-                    w.bkgd(" ", curses.color_pair(BW))
-            else:
-                # white text, black background
                 w.bkgd(" ", curses.color_pair(WB))
                 if piece and piece.color == Color.BLACK:
-                    # black text, black background
+                    # black text, white background
                     w.bkgd(" ", curses.color_pair(BB))
+            else:
+                # white text, black background
+                w.bkgd(" ", curses.color_pair(WW))
+                if piece and piece.color == Color.BLACK:
+                    # black text, black background
+                    w.bkgd(" ", curses.color_pair(BW))
             
             # Draw the piece if needed
             if piece:

@@ -4,9 +4,9 @@ import curses
 def edit_text(w, text, max_size) -> (str, bool):
     c = w.getch()
     if c == curses.ascii.DEL: text = text[:-1]
-    elif curses.ascii.isascii(chr(c)):
+    elif curses.ascii.isascii(chr(c)) and c != 10:
         if len(text) < max_size: text += chr(c)
-    return (text, (c == 10))
+    return (text, c == 10)
 
 # Creates a window in the center of the screen.
 def create_subwindow(w, height, width):

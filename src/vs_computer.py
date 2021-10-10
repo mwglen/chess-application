@@ -10,17 +10,15 @@ from constants import *
 def start(w):
     
     # Initialize game data
-    try: gd = GameData(w, LOCAL_GAME)
+    try: gd = GameData(w, VS_COMPUTER)
     except ReturnToMainMenu: return
 
     while True:
 
         # Refresh the screen
         game.draw(w, gd)
-
-        # Handle linefeeds
-        if edit_text(w, gd.input_str, 10):
-
+        gd.input_str, is_linefeed = edit_text(w, gd.input_str, 10);
+        if is_linefeed:
             # Reset msg
             gd.msg = ""
             s = gd.input_str
@@ -33,7 +31,6 @@ def start(w):
             # Exit if requested
             elif s == "exit" or s == "quit": return
 
-            # Parse input string as a move 
             else:
                 try:
                     # Attempt to make a move
@@ -43,6 +40,7 @@ def start(w):
                     if gd.curr_turn == Color.WHITE:
                         gd.curr_turn = Color.BLACK
                     else: gd.curr_turn = Color.WHITE
+                    gd.white_on_top ^= True
 
                 except InvalidMove as err:
-                     gd.msg = str(err)
+                    gd.msg = str(err)
