@@ -1,16 +1,18 @@
+import enter_names
+import choose_colors
+import curses
 from position import Position, InvalidMove
 from piece import Color
 from constants import *
-import enter_names
-import choose_colors
-import random
-import curses
 
 class GameData:
     def __init__(self, w, gm):
-        player1, player2 = enter_names.start(w, gm)
-        white, black = choose_colors.start(player1, player2)
-        white_on_top = gm == VS_COMPUTER and player2 == white
+        white = None; black = None
+        while (white == None) or (black == None):
+            player1, player2 = enter_names.start(w, gm)
+            white, black = choose_colors.start(w, player1, player2)
+            
+        white_on_top = (gm == VS_COMPUTER and player2 == white)
 
         # Set class attributes
         self.player1 = player1

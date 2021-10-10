@@ -20,3 +20,6 @@ ER = 6
 SM = 7
 SM2 = 8
 
+
+class ReturnToMainMenu(Exception):
+    pass

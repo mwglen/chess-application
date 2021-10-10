@@ -10,7 +10,8 @@ from constants import *
 def start(w):
     
     # Initialize game data
-    gd = GameData(w, LOCAL_GAME)
+    try: gd = GameData(w, LOCAL_GAME)
+    except ReturnToMainMenu: return
 
     while True:
 
@@ -18,7 +19,7 @@ def start(w):
         game.draw(w, gd)
 
         # Handle linefeeds
-        if edit_text(gd.input_str, 10):
+        if edit_text(w, gd.input_str, 10):
 
             # Reset msg
             gd.msg = ""
