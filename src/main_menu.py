@@ -21,24 +21,17 @@ def display(w):
         # Handle linefeeds
         if c == 10:
 
-            # If user selected vs_computer
+            # Start selected option
             if curr_sel == 0: vs_computer.start(w)
-
-            # If user selected local
             elif curr_sel == 1: local_game.start(w)
-
-            # If user selected exit
             elif curr_sel == 2: quit()
         
-        # Handle up arrow key
-        elif (c == curses.KEY_UP and curr_sel > 0):
-            curr_sel -= 1
-        
-        # Handle down arrow key
-        elif (c == curses.KEY_DOWN and curr_sel < 2):
-            curr_sel += 1
-
-
+        # Handle up tabs and arrow keys
+        elif (c == curses.KEY_UP and curr_sel > 0): curr_sel -= 1
+        elif (c == ord('k') and curr_sel > 0): curr_sel -= 1
+        elif (c == curses.KEY_DOWN and curr_sel < 2): curr_sel += 1
+        elif (c == ord('j') and curr_sel < 2): curr_sel += 1
+        elif c == ord('\t'): curr_sel = (curr_sel + 1) % 3
 
 def _draw(w, curr_sel):
 

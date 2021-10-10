@@ -34,13 +34,13 @@ def start(w, player1, player2) -> (str, str):
                 del sw; w.touchwin()
                 return None, None
 
-        # Handle up arrow key
-        elif (c == curses.KEY_UP and curr_sel > 0):
-            curr_sel -= 1
-
-        # Handle down arrow key
-        elif (c == curses.KEY_DOWN and curr_sel < 3):
-            curr_sel += 1
+        # Handle movement between 
+        elif (c == curses.KEY_UP and curr_sel > 0): curr_sel -= 1
+        elif (c == ord('k') and curr_sel > 0): curr_sel -= 1
+        elif (c == curses.KEY_DOWN and curr_sel < 2): curr_sel += 1
+        elif (c == ord('j') and curr_sel < 2): curr_sel += 1
+        elif c == ord('\t'): curr_sel = (curr_sel + 1) % 3
+        
 
 def _draw(sw, curr_sel, white, black):
 
