@@ -28,9 +28,7 @@ def display(w):
         
         # Handle up tabs and arrow keys
         elif (c == curses.KEY_UP and curr_sel > 0): curr_sel -= 1
-        elif (c == ord('k') and curr_sel > 0): curr_sel -= 1
         elif (c == curses.KEY_DOWN and curr_sel < 2): curr_sel += 1
-        elif (c == ord('j') and curr_sel < 2): curr_sel += 1
         elif c == ord('\t'): curr_sel = (curr_sel + 1) % 3
 
 def _draw(w, curr_sel):

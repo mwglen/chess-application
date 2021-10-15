@@ -36,9 +36,7 @@ def start(w, player1, player2) -> (str, str):
 
         # Handle movement between 
         elif (c == curses.KEY_UP and curr_sel > 0): curr_sel -= 1
-        elif (c == ord('k') and curr_sel > 0): curr_sel -= 1
         elif (c == curses.KEY_DOWN and curr_sel < 2): curr_sel += 1
-        elif (c == ord('j') and curr_sel < 2): curr_sel += 1
         elif c == ord('\t'): curr_sel = (curr_sel + 1) % 3
         
 
