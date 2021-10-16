@@ -8,10 +8,10 @@ THROUGH_SSH = 2
 MM = 1
 
 # Chessboard Colors
-WW = 2
-BW = 3
-WB = 4
-BB = 5
+WW = 2 # White on White
+BW = 3 # Black on White
+WB = 4 # White on Black
+BB = 5 # Black on Black
 
 # Error Message During Game
 ER = 6

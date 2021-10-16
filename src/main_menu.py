@@ -4,6 +4,7 @@ import local_game
 import vs_computer
 import random
 import curses
+import instructions
 
 # Displays the main menu
 def display(w):
@@ -24,12 +25,13 @@ def display(w):
             # Start selected option
             if curr_sel == 0: vs_computer.start(w)
             elif curr_sel == 1: local_game.start(w)
-            elif curr_sel == 2: quit()
+            elif curr_sel == 2: instructions.display(w)
+            elif curr_sel == 3: quit()
         
         # Handle up tabs and arrow keys
         elif (c == curses.KEY_UP and curr_sel > 0): curr_sel -= 1
-        elif (c == curses.KEY_DOWN and curr_sel < 2): curr_sel += 1
-        elif c == ord('\t'): curr_sel = (curr_sel + 1) % 3
+        elif (c == curses.KEY_DOWN and curr_sel < 3): curr_sel += 1
+        elif c == ord('\t'): curr_sel = (curr_sel + 1) % 4
 
 def _draw(w, curr_sel):
 
@@ -55,7 +57,7 @@ def _draw(w, curr_sel):
     ]
     
     # Used to vertically offset text
-    i = -3
+    i = -4
     for text in title:
         w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
                 curses.color_pair(MM))
@@ -67,14 +69,20 @@ def _draw(w, curr_sel):
             curses.color_pair(ER if curr_sel == 0 else MM))
     i += 1
 
-    # Add "LOCAL" button
+    # Add "LOCAL GAME" button
     text = "LOCAL GAME"
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
             curses.color_pair(ER if curr_sel == 1 else MM))
+    i += 1
+    
+    # Add "HOW TO PLAY" button
+    text = "INSTRUCTIONS"
+    w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
+            curses.color_pair(ER if curr_sel == 2 else MM))
     i += 1
    
     # Add "QUIT" button
     text = "QUIT"
     w.addstr(max_y//2+i, max_x//2 - len(text)//2, text, 
-            curses.color_pair(ER if curr_sel == 2 else MM))
+            curses.color_pair(ER if curr_sel == 3 else MM))
     i += 1
