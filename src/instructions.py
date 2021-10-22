@@ -24,7 +24,8 @@ def display(w):
         _draw(sw, curr_sel, chunks)
         max_curr_sel = max(len(chunks) - max_y + 2, 0)
         c = sw.getch()
-        if (c == 10 or c == curses.ascii.ESC): break
+        if (c == 10 or c == curses.ascii.ESC): 
+            del sw; w.touchwin(); break
         elif (c == curses.KEY_UP and curr_sel > 0): 
             curr_sel -= 1
         elif (c == curses.KEY_DOWN and curr_sel < max_curr_sel):

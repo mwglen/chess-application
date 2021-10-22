@@ -2,6 +2,7 @@ import curses
 import curses.ascii
 import main_menu
 import time
+import os
 
 def main(w):
     
@@ -30,4 +31,5 @@ def main(w):
     # Go to Main Menu
     main_menu.display(w)
 
+os.environ.setdefault('ESCDELAY', '0')
 curses.wrapper(main)

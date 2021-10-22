@@ -27,7 +27,9 @@ def start(w, gm) -> (str, str):
             elif curr_sel == 3: 
                 del sw; w.touchwin()
                 raise ReturnToMainMenu
-
+        elif c == 27:
+            del sw; w.touchwin()
+            raise ReturnToMainMenu
         # Handle up tabs and arrow keys
         elif (c == curses.KEY_UP and curr_sel > 0): curr_sel -= 1
         elif (c == curses.KEY_DOWN and curr_sel < 3): curr_sel += 1

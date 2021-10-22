@@ -33,7 +33,9 @@ def start(w, player1, player2) -> (str, str):
             elif curr_sel == 2: 
                 del sw; w.touchwin()
                 return None, None
-
+        elif c == curses.ascii.ESC: 
+            del sw; w.touchwin()
+            return None, None
         # Handle movement between 
         elif (c == curses.KEY_UP and curr_sel > 0): curr_sel -= 1
         elif (c == curses.KEY_DOWN and curr_sel < 2): curr_sel += 1
